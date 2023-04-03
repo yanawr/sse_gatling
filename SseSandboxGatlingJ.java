@@ -24,7 +24,7 @@ public class SseSandboxGatlingJ extends Simulation {
     SseMessageCheck sseCheckPushmessages = sse.checkMessage("checkPushmessages")
                             .check(regex("message\",\"id\":\"(.+?)\""));
 
-    SseSetCheckBuilder acc = sse("SetCheck").setCheck;
+    //SseSetCheckBuilder acc = sse("SetCheck").setCheck();
 
     ScenarioBuilder users = scenario("Users")//.exec(sseConnect, sseClose);
         .exec(sse("01_connect").connect("/es")
@@ -32,7 +32,9 @@ public class SseSandboxGatlingJ extends Simulation {
                     sse.checkMessage("checkCustom").check(substring("custom")))
         )
         .repeat(200).on(
-            exec(acc.await(60).on(sseCheckPushmessages()))
+            exec(sse("SetCheck").setCheck()
+                            .await(30).on(sseCheckPushmessages))
+            //exec(acc.await(60).on(sseCheckPushmessages()))
         )
         .pause(10)
         .exec(sse("02_Close").close());
